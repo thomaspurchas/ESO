@@ -1,0 +1,6 @@
+Django==1.4
+django-haystack==1.2.7
+httplib2==0.7.4
+poster==0.8.1
+pysolr==2.1.0-beta
+wsgiref==0.1.2
