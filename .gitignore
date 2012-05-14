@@ -4,3 +4,5 @@ include/*
 .Python
 *.pyc
 .vagrant
+*.DS_Store
+*.sqlite
