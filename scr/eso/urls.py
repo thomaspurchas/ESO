@@ -8,6 +8,8 @@ urlpatterns = patterns('',
     # Examples:
     # url(r'^$', 'eso.views.home', name='home'),
     # url(r'^eso/', include('eso.foo.urls')),
+    url(r'^upload/$', 'upload.views.new_upload'),
+    url(r'^getdetails/$', 'upload.views.get_upload_details'),
 
     # Uncomment the admin/doc line below to enable admin documentation:
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
