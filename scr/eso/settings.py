@@ -1,4 +1,5 @@
 # Django settings for eso project.
+import os
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -20,9 +21,12 @@ DATABASES = {
     }
 }
 
+# I use this so be careful!
+SOLR_URL = 'http://127.0.0.1:8983/solr'
+
 HAYSTACK_SITECONF = 'eso.search_sites'
 HAYSTACK_SEARCH_ENGINE = 'solr'
-HAYSTACK_SOLR_URL = 'http://127.0.0.1:8983/solr'
+HAYSTACK_SOLR_URL = SOLR_URL
 
 # HAYSTACK_CONNECTIONS = {
 #     'default': {
@@ -32,6 +36,8 @@ HAYSTACK_SOLR_URL = 'http://127.0.0.1:8983/solr'
 #         # 'URL': 'http://127.0.0.1:8983/solr/mysite',
 #     },
 # }
+
+SITE_ROOT = '/'.join(os.path.dirname(__file__).split('/')[0:-2])
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -122,6 +128,7 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
+    '%s/scr/templates' % SITE_ROOT,
 )
 
 INSTALLED_APPS = (
@@ -138,6 +145,7 @@ INSTALLED_APPS = (
     'haystack',
     'south',
     'upload',
+    'core'
 )
 
 # A sample logging configuration. The only tangible logging
