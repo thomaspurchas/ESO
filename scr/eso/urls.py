@@ -10,6 +10,8 @@ urlpatterns = patterns('',
     # url(r'^eso/', include('eso.foo.urls')),
     url(r'^upload/$', 'upload.views.new_upload'),
     url(r'^getdetails/$', 'upload.views.get_upload_details'),
+    url(r'^document/(\d+)/$', 'core.views.serve_document'),
+    (r'^search/', include('haystack.urls')),
 
     # Uncomment the admin/doc line below to enable admin documentation:
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
