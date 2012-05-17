@@ -1,5 +1,10 @@
 <h1>{{ file_name}}</h1>
+{% if error %}
+<h2 style='color:red'>{{error}}</h2>
+{% endif %}
+{% if form %}
 <form action="/getdetails/" method="post">{% csrf_token %}
 {{ form.as_p }}
 <input type="submit" value="Submit" />
 </form>
+{% endif %}

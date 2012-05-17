@@ -1,6 +1,6 @@
 # Create your views here.
 from hashlib import md5
-from pysolr import Solr
+from pysolr import Solr, SolrError
 from os import path
 
 from django.conf import settings
@@ -95,24 +95,32 @@ def get_upload_details(request):
 
         # Setup a solr instance for extract file contents
         solr = Solr(settings.SOLR_URL, timeout=20)
-
-        file_data = solr.extract(temp_file.file)
-        print file_data['metadata']
         data = {'filename': temp_file.name}
 
         try:
-            data['title'] = file_data['metadata']['title'][0]
-            data['author'] = file_data['metadata']['Author'][0]
-        except:
-            pass
+            file_data = solr.extract(temp_file.file)
+            print file_data['metadata']
 
-        details_form = UploadDetailForm(data)
+            try:
+                data['title'] = file_data['metadata']['title'][0]
+                data['author'] = file_data['metadata']['Author'][0]
+            except:
+                pass
 
-        # Redirect the user to the upload information page after POST
-        return render_to_response('upload/upload_details.html',
-            {'form': details_form, 'file_name': data['filename']},
-            context_instance=RequestContext(request)
-        )
+            details_form = UploadDetailForm(data)
+
+            # Redirect the user to the upload information page after POST
+            return render_to_response('upload/upload_details.html',
+                {'form': details_form, 'file_name': data['filename']},
+                context_instance=RequestContext(request)
+            )
+        except SolrError:
+            # Return an error message
+            return render_to_response('upload/upload_details.html',
+                {'error': 'Solr extraction error', 'file_name': data['filename']},
+                context_instance=RequestContext(request)
+            )
+
 
     # If we got here without a file, redirect to the upload page
     return HttpResponseRedirect(reverse('upload.views.new_upload'))
