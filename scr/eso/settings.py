@@ -1,5 +1,6 @@
 # Django settings for eso project.
 import os
+import djcelery
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -37,6 +38,10 @@ HAYSTACK_SOLR_URL = SOLR_URL
 #     },
 # }
 
+# celery stuff
+djcelery.setup_loader()
+
+# Useful SITE_ROOT variable
 SITE_ROOT = '/'.join(os.path.dirname(__file__).split('/')[0:-2])
 
 # Local time zone for this installation. Choices can be found here:
@@ -142,8 +147,13 @@ INSTALLED_APPS = (
     # 'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
+
+    # Utility apps
     'haystack',
     'south',
+    'djcelery',
+
+    # Out apps :)
     'upload',
     'core'
 )
