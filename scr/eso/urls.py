@@ -11,6 +11,8 @@ urlpatterns = patterns('',
     url(r'^upload/$', 'upload.views.new_upload'),
     url(r'^getdetails/$', 'upload.views.get_upload_details'),
     url(r'^document/(\d+)/$', 'core.views.serve_document'),
+    url(r'^api/document/([0-9]+)/pack/([0-9]+)/derived_file/$',
+        'core.views.api_derived_document_upload'),
     (r'^search/', include('haystack.urls')),
 
     # Uncomment the admin/doc line below to enable admin documentation:
