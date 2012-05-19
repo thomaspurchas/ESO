@@ -2,6 +2,7 @@
 from hashlib import md5
 from pysolr import Solr, SolrError
 from os import path
+import logging
 
 from django.conf import settings
 
@@ -13,8 +14,10 @@ from django.template import RequestContext
 
 from upload.forms import NewUploadForm
 from upload.forms import UploadDetailForm
-from core.models import Document
+from core.models import Document, DerivedFile
 from upload.models import TempFile
+
+log = logging.getLogger(__name__)
 
 def clean_temp_file(file):
     # Helper function to clean up temp files
@@ -41,17 +44,18 @@ def new_upload(request):
                 sum.update(chunk)
 
             temp_file.md5_sum = sum.hexdigest()
-            temp_file.save()
 
             # First check that we dont already have a copy of the file
-            prev_files = Document.objects.filter(md5_sum = temp_file.md5_sum)
-            if len(prev_files):
-                print 'Had file before'
+            if not Document.objects.unique_md5(temp_file.md5_sum, (DerivedFile,)):
+                log.debug('File was uploaded that we already have (md5: %s)',
+                    temp_file.md5_sum)
                 clean_temp_file(temp_file)
                 return render_to_response('upload/new_upload.html',
                     {'form': form, 'error': 'File aready uploaded'},
                     context_instance=RequestContext(request)
                 )
+            else:
+                temp_file.save()
 
             # Store a ref to the db entry that looks after the temp file
             # But first check to see if there is already a temp file for this session
