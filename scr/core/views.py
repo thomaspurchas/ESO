@@ -37,8 +37,7 @@ def api_derived_document_upload(request, document_pk, pack_pk):
             md5_sum =  sum.hexdigest()
             new_file.md5_sum = md5_sum
 
-            if (Document.objects.filter(md5_sum=md5_sum) or
-                DerivedFile.objects.filter(md5_sum=md5_sum)):
+            if not Document.objects.unique_md5(md5_sum):
 
                 response_data = {
                         'result': 'failure',
