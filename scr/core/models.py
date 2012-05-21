@@ -61,7 +61,7 @@ class Document(models.Model):
 class DerivedPack(models.Model):
     type = models.CharField(max_length=20)
 
-    derived_from = models.OneToOneField(Document)
+    derived_from = models.ForeignKey(Document, related_name='packs')
 
     class Meta:
         unique_together = ('type', 'derived_from',)
@@ -81,6 +81,6 @@ class DerivedFile(models.Model):
     md5_sum = models.CharField(max_length=64, unique=True)
     order = models.IntegerField(default=0)
 
-    pack = models.ForeignKey(DerivedPack)
+    pack = models.ForeignKey(DerivedPack, related_name='files')
 
     objects = Md5Manager()
