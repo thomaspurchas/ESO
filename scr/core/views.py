@@ -14,11 +14,19 @@ from core.forms import ApiDerivedFileUploadForm
 
 log = logging.getLogger(__name__)
 
-def serve_document(request, pk):
+def serve_document(request, pk, type=None):
     doc = Document.objects.get(pk=pk)
     #pack = doc.packs.objects.get(type='pdf')
+    if type:
+        type = str(type)
+        if type.endswith('/'):
+            type = type[:-1]
+        object = DerivedFile.objects.filter(pack__derived_from=doc)
+        object = object.filter(pack__type__exact=type)[0]
+    else:
+        object = doc
 
-    return serve(request, doc.file.name, settings.MEDIA_ROOT)
+    return serve(request, object.file.name, settings.MEDIA_ROOT)
 
 # A simple view that allows the upload of new derived files from worker machines
 @csrf_exempt # Turn off csrf because its silly for an api.

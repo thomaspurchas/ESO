@@ -19,7 +19,7 @@ urlpatterns = patterns('',
     # url(r'^eso/', include('eso.foo.urls')),
     url(r'^upload/$', 'upload.views.new_upload'),
     url(r'^getdetails/$', 'upload.views.get_upload_details'),
-    url(r'^document/(\d+)/$', 'core.views.serve_document'),
+    url(r'^document/(\d+)/(\w+/)?$', 'core.views.serve_document'),
 
     (r'^search/', include('haystack.urls')),
 
