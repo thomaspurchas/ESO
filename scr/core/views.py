@@ -17,14 +17,16 @@ log = logging.getLogger(__name__)
 def serve_document(request, pk, type=None):
     doc = Document.objects.get(pk=pk)
     #pack = doc.packs.objects.get(type='pdf')
+    object = doc
     if type:
         type = str(type)
         if type.endswith('/'):
             type = type[:-1]
-        object = DerivedFile.objects.filter(pack__derived_from=doc)
-        object = object.filter(pack__type__exact=type)[0]
-    else:
-        object = doc
+        objects = DerivedFile.objects.filter(pack__derived_from=doc)
+        objects = object.filter(pack__type__exact=type)
+
+        if objects:
+            object = objects[0]
 
     return serve(request, object.file.name, settings.MEDIA_ROOT)
 
