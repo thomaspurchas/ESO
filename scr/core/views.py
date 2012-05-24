@@ -23,7 +23,7 @@ def serve_document(request, pk, type=None):
         if type.endswith('/'):
             type = type[:-1]
         objects = DerivedFile.objects.filter(pack__derived_from=doc)
-        objects = object.filter(pack__type__exact=type)
+        objects = objects.filter(pack__type__exact=type)
 
         if objects:
             object = objects[0]
