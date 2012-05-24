@@ -72,6 +72,7 @@ class DerivedFile(models.Model):
         path = instance.pack.derived_from.file.path
         dir, name = os_path.split(path)
         type = instance.pack.type
+        file_name = type + '-' + str(instance.order) + os_path.splitext(file_name)[1]
 
         path = os_path.join(dir, 'derived_files', name, type, file_name)
 
