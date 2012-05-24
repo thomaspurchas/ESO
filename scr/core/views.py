@@ -1,4 +1,6 @@
 # Create your views here.
+import logging
+import os
 from hashlib import md5
 import json
 
@@ -10,8 +12,11 @@ from django.views.decorators.csrf import csrf_exempt
 from core.models import Document, DerivedFile, DerivedPack
 from core.forms import ApiDerivedFileUploadForm
 
+log = logging.getLogger(__name__)
+
 def serve_document(request, pk):
     doc = Document.objects.get(pk=pk)
+    #pack = doc.packs.objects.get(type='pdf')
 
     return serve(request, doc.file.name, settings.MEDIA_ROOT)
 
@@ -24,7 +29,7 @@ def api_derived_document_upload(request, document_pk, pack_pk):
     #    return
 
     if request.method == 'POST':
-        print 'got post'
+        log.debug('Derived File Post')
         # Process the request
         form = ApiDerivedFileUploadForm(request.POST, request.FILES)
         if form.is_valid():
@@ -37,7 +42,7 @@ def api_derived_document_upload(request, document_pk, pack_pk):
             md5_sum =  sum.hexdigest()
             new_file.md5_sum = md5_sum
 
-            if not Document.objects.unique_md5(md5_sum):
+            if not Document.objects.unique_md5(md5_sum, (DerivedFile,)):
 
                 response_data = {
                         'result': 'failure',
@@ -50,7 +55,7 @@ def api_derived_document_upload(request, document_pk, pack_pk):
                     doc = Document.objects.get(pk=int(document_pk))
                     pack = DerivedPack.objects.get(pk=int(pack_pk))
 
-                    if not doc.derivedpack == pack:
+                    if not pack.derived_from == doc:
                         response_data = {
                             'result': 'failure',
                             'success': False,
