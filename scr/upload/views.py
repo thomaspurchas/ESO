@@ -16,6 +16,7 @@ from upload.forms import NewUploadForm
 from upload.forms import UploadDetailForm
 from core.models import Document, DerivedFile
 from upload.models import TempFile
+from pdfconvert.tasks import create_pdf
 
 log = logging.getLogger(__name__)
 
@@ -91,8 +92,12 @@ def get_upload_details(request):
 
             # Save the document and clean up temp files and stuff
             new_document.save()
+            log.info("Saved a new document: %s", new_document.id)
             clean_temp_file(temp_file)
             del request.session['upload_file']
+
+            # Create a PDF
+            log.info(create_pdf.delay(new_document.id).result)
 
     if request.session.get('upload_file', False):
         temp_file = request.session['upload_file']
@@ -103,13 +108,15 @@ def get_upload_details(request):
 
         try:
             file_data = solr.extract(temp_file.file)
-            print file_data['metadata']
+            log.debug(file_data['metadata'])
 
             try:
-                data['title'] = file_data['metadata']['title'][0]
+                data['title'] = file_data['metadata']['title'][0] or data['filename']
                 data['author'] = file_data['metadata']['Author'][0]
             except:
                 pass
+
+            data['title'] = data['filename']
 
             details_form = UploadDetailForm(data)
 
