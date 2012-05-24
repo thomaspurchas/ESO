@@ -69,7 +69,7 @@ class DerivedPack(models.Model):
 class DerivedFile(models.Model):
 
     def generate_filename(instance, file_name):
-        path = instance.pack.derived_from.file.path
+        path = instance.pack.derived_from.file.name
         dir, name = os_path.split(path)
         type = instance.pack.type
         file_name = type + '-' + str(instance.order) + os_path.splitext(file_name)[1]
