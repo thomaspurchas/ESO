@@ -29,6 +29,12 @@ HAYSTACK_SITECONF = 'eso.search_sites'
 HAYSTACK_SEARCH_ENGINE = 'solr'
 HAYSTACK_SOLR_URL = SOLR_URL
 
+# Statsd setup_loader
+STATSD_CLIENT = 'django_statsd.clients.null'
+STATSD_HOST = '127.0.0.1'
+STATSD_PORT = 8125
+STATSD_PREFIX = None
+
 # HAYSTACK_CONNECTIONS = {
 #     'default': {
 #         'ENGINE': 'haystack.backends.solr_backend.SolrEngine',
@@ -40,6 +46,8 @@ HAYSTACK_SOLR_URL = SOLR_URL
 
 # celery stuff
 djcelery.setup_loader()
+BROKER_URL = "django://"
+#CELERY_ALWAYS_EAGER = DEBUG
 
 # Useful SITE_ROOT variable
 SITE_ROOT = '/'.join(os.path.dirname(__file__).split('/')[0:-2])
@@ -115,6 +123,7 @@ TEMPLATE_LOADERS = (
 )
 
 MIDDLEWARE_CLASSES = (
+    #'django_statsd.middleware.GraphiteRequestTimingMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -144,7 +153,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # Uncomment the next line to enable the admin:
-    # 'django.contrib.admin',
+    'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 
@@ -152,10 +161,12 @@ INSTALLED_APPS = (
     'haystack',
     'south',
     'djcelery',
+    "kombu.transport.django",
 
-    # Out apps :)
+    # Our apps :)
     'upload',
-    'core'
+    'core',
+    'pdfconvert',
 )
 
 # A sample logging configuration. The only tangible logging
@@ -166,6 +177,14 @@ INSTALLED_APPS = (
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '%(levelname)s %(asctime)s %(name)s %(lineno)d %(message)s'
+        },
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+        },
+    },
     'filters': {
         'require_debug_false': {
             '()': 'django.utils.log.RequireDebugFalse'
@@ -176,9 +195,24 @@ LOGGING = {
             'level': 'ERROR',
             'filters': ['require_debug_false'],
             'class': 'django.utils.log.AdminEmailHandler'
-        }
+        },
+        'console':{
+            'level':'DEBUG',
+            'class':'logging.StreamHandler',
+            'formatter': 'verbose'
+        },
     },
     'loggers': {
+        '': {
+            'handlers':['console'],
+            'propagate': True,
+            'level':'DEBUG',
+        },
+        'django': {
+            'handlers':['console'],
+            'propagate': False,
+            'level':'INFO',
+        },
         'django.request': {
             'handlers': ['mail_admins'],
             'level': 'ERROR',
