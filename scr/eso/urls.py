@@ -5,8 +5,8 @@ from tastypie.api import Api
 from api.base import DocumentResource, DerivedPackResource, DerivedFileResource
 
 # Uncomment the next two lines to enable the admin:
-# from django.contrib import admin
-# admin.autodiscover()
+from django.contrib import admin
+admin.autodiscover()
 
 api_v1 = Api(api_name='v1')
 api_v1.register(DocumentResource())
@@ -26,11 +26,11 @@ urlpatterns = patterns('',
     # Api urls
     url(r'^api/v1/document/([0-9]+)/pack/([0-9]+)/derived_file/$',
         'core.views.api_derived_document_upload'),
-    url(r'^api/', include(api_v1.urls))
+    url(r'^api/', include(api_v1.urls)),
 
     # Uncomment the admin/doc line below to enable admin documentation:
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
     # Uncomment the next line to enable the admin:
-    # url(r'^admin/', include(admin.site.urls)),
+    url(r'^admin/', include(admin.site.urls)),
 )
