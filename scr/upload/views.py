@@ -16,7 +16,7 @@ from upload.forms import NewUploadForm
 from upload.forms import UploadDetailForm
 from core.models import Document, DerivedFile
 from upload.models import TempFile
-from pdfconvert.tasks import create_pdf
+from convert.tasks import create_pdf
 
 log = logging.getLogger(__name__)
 

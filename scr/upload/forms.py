@@ -9,4 +9,4 @@ class NewUploadForm(forms.Form):
 
 class UploadDetailForm(forms.Form):
     title = forms.CharField(max_length = 200, label='Title')
-    author = forms.CharField(max_length = 100, label='Author')
+    author = forms.CharField(max_length = 100, label='Author', required=False)
