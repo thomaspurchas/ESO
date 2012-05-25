@@ -166,7 +166,7 @@ INSTALLED_APPS = (
     # Our apps :)
     'upload',
     'core',
-    'pdfconvert',
+    'convert',
 )
 
 # A sample logging configuration. The only tangible logging

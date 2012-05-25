@@ -59,6 +59,10 @@ def create_pdf(document_pk, type='pdf'):
         log.error('No mime type returned will document request')
         return False
 
+    if req.headers['content-type'] == 'application/pdf':
+        log.info("Can't convert pdf's")
+        return False
+
     extension = mimetypes.guess_extension(req.headers['content-type'])
 
     # Create a temp file using the extension derived from the mime-type
