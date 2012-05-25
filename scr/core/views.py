@@ -27,6 +27,9 @@ def serve_document(request, pk, type=None):
 
         if objects:
             object = objects[0]
+    if os.path.splitext(doc.file.name)[1].lower() == u'.pdf':
+        # Big ass botch
+        object = doc
 
     return serve(request, object.file.name, settings.MEDIA_ROOT)
 

@@ -58,6 +58,14 @@ class Document(models.Model):
     def get_absolute_url(self):
         return "/document/%i/" % self.id
 
+    def has_pdf(self):
+        if os_path.splitext(self.file.name)[1].lower() == u'.pdf':
+            return True
+        elif len(self.packs.filter(type='pdf')):
+            return True
+
+        return False
+
 class DerivedPack(models.Model):
     type = models.CharField(max_length=20)
 
