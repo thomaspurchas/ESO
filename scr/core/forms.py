@@ -7,6 +7,3 @@ class ApiDerivedFileUploadForm(ModelForm):
     class Meta:
         model = DerivedFile
         exclude = ('md5_sum', 'pack')
-        widgets = {
-            'pack': CharField()
-        }
