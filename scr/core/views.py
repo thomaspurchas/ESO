@@ -6,30 +6,39 @@ import json
 
 from django.views.static import serve
 from django.conf import settings
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.views.decorators.csrf import csrf_exempt
+from django.shortcuts import get_object_or_404
 
+from utils import get_object_or_none
 from core.models import Document, DerivedFile, DerivedPack
 from core.forms import ApiDerivedFileUploadForm
 
 log = logging.getLogger(__name__)
 
-def serve_document(request, pk, type=None):
-    doc = Document.objects.get(pk=pk)
+def serve_document(request, pk, type=None, order=None):
+    doc = get_object_or_404(Document, pk=pk)
     #pack = doc.packs.objects.get(type='pdf')
-    object = doc
+    object = None
     if type:
         type = str(type)
         if type.endswith('/'):
             type = type[:-1]
-        objects = DerivedFile.objects.filter(pack__derived_from=doc)
-        objects = objects.filter(pack__type__exact=type)
+        if not order:
+            order = '0'
+        if order.endswith('/'):
+            order = order[:-1]
+        object = get_object_or_none(DerivedFile,
+            pack__derived_from=doc, pack__type__exact=type, order=int(order))
 
-        if objects:
-            object = objects[0]
-    if os.path.splitext(doc.file.name)[1].lower() == u'.pdf':
-        # Big ass botch
+        # If you document is a pdf and they want a pdf, serve the original
+        if (type == 'pdf') and (not object) and (doc.file.name.lower().endswith('.pdf')):
+            object = doc
+    else:
         object = doc
+
+    if not object:
+        raise Http404
 
     return serve(request, object.file.name, settings.MEDIA_ROOT)
 
