@@ -2,16 +2,20 @@ from pysolr import Solr
 
 from django.conf import settings
 
-from haystack.indexes import *
+from haystack import indexes
 from haystack import site
 from core.models import Document, DerivedFile
 
 
-class DocumentIndex(RealTimeSearchIndex):
-    text = CharField(document=True)
-    title = CharField(model_attr='title', boost=1.125)
+class DocumentIndex(indexes.RealTimeSearchIndex):
+    text = indexes.CharField(document=True)
+    title = indexes.CharField(model_attr='title', boost=1.125)
+    tags = indexes.MultiValueField(faceted=True)
     #author = CharField(model_attr='user__get_full_name', faceted=True)
     #module = CharField(model_attr='module__get_full_title')
+
+    def prepare_tags(self, obj):
+        return [tag.title for tag in obj.tags.all()]
 
     def prepare(self, obj):
         data = super(DocumentIndex, self).prepare(obj)
@@ -41,6 +45,9 @@ class DocumentIndex(RealTimeSearchIndex):
             data['text'] = pdf_extracted_data
         else:
             data['text'] = file_extracted_data
+
+        for tag in obj.tags.all():
+            data['text'] += ' ' + tag.title
 
         return data
 
