@@ -1,6 +1,9 @@
 from os import path as os_path
 
 from django.db import models
+from django.db.models.signals import pre_delete
+
+from file_management import  delete_file_on_model_delete
 
 # MD5 manager. Provides a method to check for any file with the same md5 sum
 # as the one provided against the provided models in addition to the current model.
@@ -17,6 +20,12 @@ class Md5Manager(models.Manager):
         return True
 
 # Create your models here.
+class Tag(models.Model):
+    title = models.CharField(max_length=50)
+    description = models.TextField(blank=True)
+
+    tagged = models.ManyToManyField("Document", related_name="tags")
+
 class Lecturer(models.Model):
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
@@ -66,6 +75,12 @@ class Document(models.Model):
 
         return False
 
+    def has_pngs(self):
+        if len(self.packs.filter(type='pngs')):
+            return True
+
+        return False
+
 class DerivedPack(models.Model):
     type = models.CharField(max_length=20)
 
@@ -93,3 +108,10 @@ class DerivedFile(models.Model):
     pack = models.ForeignKey(DerivedPack, related_name='files')
 
     objects = Md5Manager()
+
+    def get_absolute_url(self):
+        return "/document/%i/%s/%i/" % (
+            self.pack.derived_from.id, self.pack.type, self.order)
+
+pre_delete.connect(delete_file_on_model_delete, sender=DerivedFile)
+pre_delete.connect(delete_file_on_model_delete, sender=Document)
