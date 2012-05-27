@@ -4,6 +4,9 @@ import os
 from hashlib import md5
 import json
 
+import Image
+
+from django.conf import settings
 from django.views.static import serve
 from django.conf import settings
 from django.http import HttpResponse, Http404
@@ -41,6 +44,57 @@ def serve_document(request, pk, type=None, order=None):
         raise Http404
 
     return serve(request, object.file.name, settings.MEDIA_ROOT)
+
+def serve_document_thumbnail(request, document_pk, width, format=None):
+    if not format:
+        format = settings.ALLOWED_IMAGE_FORMATS[0]
+    if (width in settings.ALLOWED_IMAGE_WIDTHS) and (
+        format in settings.ALLOWED_IMAGE_FORMATS):
+        #get photo
+        photo=get_object_or_404(DerivedFile, order=0,
+            pack__type='pngs', pack__derived_from__id=document_pk)
+
+        #path to original image and file split
+        original_file=os.path.join(settings.MEDIA_ROOT,photo.file.name)
+        filehead, filetail = os.path.split(original_file)
+
+        filename, fileext = os.path.splitext(filetail)
+
+        image_file = os.path.join(settings.IMAGE_ON_DEMAND_DIR, str(width),
+            str(photo.pack.derived_from.id), format, filename + '.' + format)
+
+        #check if image path exists otherwise create it
+        image_path=os.path.dirname(image_file)
+        if not os.path.exists(image_path):
+            os.makedirs(image_path)
+
+        # check if file exists and the original file hasn't updated in between
+        if os.path.exists(image_file) and os.path.getmtime(original_file)>os.path.getmtime(image_file):
+            os.unlink(image_file)
+
+        # if the image wasn't already resized, resize it.Maybe I should rewrite it to do this directly with PythonMagick
+        # taken from snippet http://www.djangosnippets.org/snippets/453/
+
+        if not os.path.exists(image_file):
+            print 'image cache miss'
+            image = Image.open(original_file)
+
+            # we need te calculate the new height based on the ratio of the original image, create integers
+            ratio=float(float(image.size[0]) / float(image.size[1]))
+            height=int(float(width)/ratio)
+            width=int(width)
+
+            image.thumbnail((width, height), Image.ANTIALIAS)
+
+            #optional unsharp mask using snippet http://www.djangosnippets.org/snippets/1267/
+            #image = usm(image,settings.RADIUS,settings.SIGMA,settings.AMOUNT,settings.THRESHOLD)
+
+            try:
+                image.save(image_file, format, quality=90, optimize=1)
+            except:
+                image.save(image_file, format, quality=90)
+
+        return serve(request, image_file, '/')
 
 # A simple view that allows the upload of new derived files from worker machines
 @csrf_exempt # Turn off csrf because its silly for an api.

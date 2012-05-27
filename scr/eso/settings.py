@@ -82,6 +82,14 @@ USE_TZ = True
 # Example: "/home/media/media.lawrence.com/media/"
 MEDIA_ROOT = '%s/media/' % SITE_ROOT
 
+#image on demand settings, writable path by webserver
+IMAGE_ON_DEMAND_DIR = os.path.join(MEDIA_ROOT,'image_on_demand/')
+
+#image widths and formats allowed (First image format is used as default when client does
+# not select)
+ALLOWED_IMAGE_WIDTHS=('600',)
+ALLOWED_IMAGE_FORMATS=('jpeg', 'png')
+
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
 # Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
@@ -145,6 +153,11 @@ TEMPLATE_DIRS = (
     '%s/scr/templates' % SITE_ROOT,
 )
 
+PASSWORD_HASHERS = (
+    'django.contrib.auth.hashers.BCryptPasswordHasher',
+    'django.contrib.auth.hashers.PBKDF2PasswordHasher',
+)
+
 INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -162,6 +175,7 @@ INSTALLED_APPS = (
     'south',
     'djcelery',
     "kombu.transport.django",
+    'tastypie',
 
     # Our apps :)
     'upload',
