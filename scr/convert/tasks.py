@@ -59,6 +59,8 @@ def create_pdf(document_pk, type='pdf', callback=None):
 
     if req.headers['content-type'] == 'application/pdf':
         log.info("Can't convert pdf's")
+        if callback:
+            subtask(callback).delay()
         return False
 
     extension = mimetypes.guess_extension(req.headers['content-type'])
