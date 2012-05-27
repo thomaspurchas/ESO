@@ -16,7 +16,7 @@ from upload.forms import NewUploadForm
 from upload.forms import UploadDetailForm
 from core.models import Document, DerivedFile
 from upload.models import TempFile
-from convert.tasks import create_pdf
+from convert.tasks import create_pdf, create_pngs
 
 log = logging.getLogger(__name__)
 
@@ -96,8 +96,9 @@ def get_upload_details(request):
             clean_temp_file(temp_file)
             del request.session['upload_file']
 
-            # Create a PDF
-            log.info(create_pdf.delay(new_document.id).result)
+            # Create a PDF and pngs
+            create_pdf.delay(new_document.id,
+                callback=create_pngs.subtask((new_document.id,)))
 
     if request.session.get('upload_file', False):
         temp_file = request.session['upload_file']
