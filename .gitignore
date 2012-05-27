@@ -8,5 +8,4 @@ include/*
 *.sqlite
 BBedit/eso.bbprojectd/Unix Worksheet.worksheet
 BBedit/eso.bbprojectd/Scratchpad.txt
-media/upload-temp/*
-media/documents/*
+media/*
