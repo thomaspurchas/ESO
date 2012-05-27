@@ -22,6 +22,8 @@ DATABASES = {
     }
 }
 
+LOGIN_REDIRECT_URL = '/search/'
+
 # I use this so be careful!
 SOLR_URL = 'http://127.0.0.1:8983/solr'
 
@@ -137,6 +139,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'utils.require_login.RequireLoginMiddleware',
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )

@@ -37,6 +37,9 @@ urlpatterns = patterns('',
         'core.views.api_derived_document_upload'),
     url(r'^api/', include(api_v1.urls)),
 
+    # Login
+    url(r'^accounts/login/$', 'django.contrib.auth.views.login'),
+
     # Uncomment the admin/doc line below to enable admin documentation:
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
