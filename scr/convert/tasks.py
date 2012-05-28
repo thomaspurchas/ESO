@@ -12,6 +12,7 @@ import Image
 import slumber
 import requests
 from django_statsd.clients import statsd
+from requests.auth import HTTPDigestAuth
 from poster.encode import multipart_encode
 from poster.streaminghttp import register_openers
 
@@ -27,7 +28,9 @@ statsd
 register_openers()
 
 # Celery tasks
-api = slumber.API('http://localhost:8000/api/v1')
+auth = HTTPDigestAuth('bot','93bebc404a38b620b84505644d7ea934e7957331')
+api = slumber.API('http://localhost:8000/api/v1',
+    auth=auth)
 
 @task(acks_late=True)
 def create_pdf(document_pk, type='pdf', callback=None):
@@ -43,7 +46,7 @@ def create_pdf(document_pk, type='pdf', callback=None):
     # Get the file using the absolute url
     url = 'http://localhost:8000' + doc[u'absolute_url']
 
-    req = requests.get(url)
+    req = requests.get(url, auth=auth)
     if req.status_code != 200:
         statsd.incr('failed_conversions')
         log.warn('Did not get a HTTP 200 code when retrieving document.' +
@@ -185,7 +188,7 @@ def create_pngs(document_pk, type='pngs', callback=None):
     # Get the file using the absolute url
     url = 'http://localhost:8000' + pdf[u'absolute_url']
 
-    req = requests.get(url)
+    req = requests.get(url, auth)
     if req.status_code != 200:
         statsd.incr('failed_png_generations')
         log.warn('Did not get a HTTP 200 code when retrieving document.' +
