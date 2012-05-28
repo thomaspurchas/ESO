@@ -20,8 +20,8 @@ sqs = SearchQuerySet().facet('tags')
 
 urlpatterns = patterns('',
     # Examples:
-    # url(r'^$', 'eso.views.home', name='home'),
-    # url(r'^eso/', include('eso.foo.urls')),
+    url(r'^$', 'core.views.home', name='home'),
+
     url(r'^upload/$', 'upload.views.new_upload'),
     url(r'^getdetails/$', 'upload.views.get_upload_details'),
     url(r'^document/(\d+)/thumbnail/(\d+)/(?:(\w+)/)?$', 'core.views.serve_document_thumbnail',
@@ -35,6 +35,8 @@ urlpatterns = patterns('',
     # Api urls
     url(r'^api/v1/document/([0-9]+)/pack/([0-9]+)/derived_file/$',
         'core.views.api_derived_document_upload'),
+    url(r'^api/v1/document/(\d+)/(?:(\w+)/)?(?:(\d+)/)?$', 'core.views.serve_document',
+        name='api_serve_document'),
     url(r'^api/', include(api_v1.urls)),
 
     # Login

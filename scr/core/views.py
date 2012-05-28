@@ -5,11 +5,12 @@ from hashlib import md5
 import json
 
 import Image
+from tastypie.authentication import DigestAuthentication
 
 from django.conf import settings
 from django.views.static import serve
 from django.conf import settings
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import get_object_or_404
 
@@ -19,7 +20,13 @@ from core.forms import ApiDerivedFileUploadForm
 
 log = logging.getLogger(__name__)
 
+def home(request):
+    return HttpResponseRedirect('/search/')
+
 def serve_document(request, pk, type=None, order=None):
+    if request.path.startswith('/api/'):
+        DigestAuthentication().is_authenticated(request)
+
     doc = get_object_or_404(Document, pk=pk)
     #pack = doc.packs.objects.get(type='pdf')
     object = None

@@ -1,6 +1,6 @@
 from tastypie.resources import ModelResource, ALL_WITH_RELATIONS
 from tastypie import fields
-from tastypie.authorization import DjangoAuthorization
+from tastypie.authorization import Authorization
 from tastypie.authentication import DigestAuthentication
 from django.contrib.auth.models import User
 from django.db import models
@@ -28,7 +28,7 @@ class DerivedPackResource(ModelResource):
         queryset = DerivedPack.objects.all()
         resource_name = 'derivedpack'
         excludes = []
-        authorization= DjangoAuthorization()
+        authorization= Authorization() # CHANGE THIS!!
 
 # A sub class of the above resource. This just makes sure that we dont send
 # stupid amounts of info when a document is requested.
