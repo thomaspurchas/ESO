@@ -58,7 +58,7 @@ padding-right: 20px;
                     <a href="{{ result.object.get_absolute_url }}">{{ result.object.title }}</a>
                     {% endif %}
                     {% if result.object.has_pngs %}
-                        <a href="{% url 'serve_document result.object.id' 'pdf' %}">
+                        <a href="{% url 'serve_document' result.object.id 'pdf' %}">
                             <img class="slide" src="{% url 'serve_document_thumbnail' result.object.id 600 %}" />
                         </a>
                     {% endif %}
