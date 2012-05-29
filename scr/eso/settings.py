@@ -30,6 +30,7 @@ SOLR_URL = 'http://127.0.0.1:8983/solr'
 HAYSTACK_SITECONF = 'eso.search_sites'
 HAYSTACK_SEARCH_ENGINE = 'solr'
 HAYSTACK_SOLR_URL = SOLR_URL
+HAYSTACK_SOLR_TIMEOUT = 30
 
 # Statsd setup_loader
 STATSD_CLIENT = 'django_statsd.clients.null'
