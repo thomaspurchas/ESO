@@ -188,7 +188,7 @@ def create_pngs(document_pk, type='pngs', callback=None):
     # Get the file using the absolute url
     url = 'http://localhost:8000' + pdf[u'download_url']
 
-    req = requests.get(url, auth)
+    req = requests.get(url, auth=auth)
     if req.status_code != 200:
         statsd.incr('failed_png_generations')
         log.warn('Did not get a HTTP 200 code when retrieving document.' +
