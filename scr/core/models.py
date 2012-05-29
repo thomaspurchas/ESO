@@ -74,6 +74,9 @@ class Document(models.Model):
     def get_absolute_url(self):
         return reverse('serve_document', args=(self.id,))
 
+    def get_api_url(self):
+        return reverse('api_serve_document', args=(self.id,))
+
     def has_pdf(self):
         if os_path.splitext(self.file.name)[1].lower() == u'.pdf':
             return True
@@ -132,6 +135,10 @@ class DerivedFile(models.Model):
 
     def get_absolute_url(self):
         return reverse('serve_document', args=(self.pack.derived_from.id,
+            self.pack.type, self.order))
+
+    def get_api_url(self):
+        return reverse('api_serve_document', args=(self.pack.derived_from.id,
             self.pack.type, self.order))
 
     def __unicode__(self):

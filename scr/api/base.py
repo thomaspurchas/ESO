@@ -13,6 +13,7 @@ models.signals.post_save.connect(create_api_key, sender=User)
 class DocumentResource(ModelResource):
     packs = fields.ToManyField('api.base.DerivedPackReducedResource', 'packs',
         full=True)
+    download_url = fields.CharField(attribute='get_api_url', readonly=True, null=True)
     class Meta:
         queryset = Document.objects.all()
         resource_name = 'document'
@@ -38,6 +39,7 @@ class DerivedPackReducedResource(DerivedPackResource):
 
 class DerivedFileResource(ModelResource):
     pack = fields.ToOneField('api.base.DerivedPackReducedResource', 'pack')
+    download_url = fields.CharField(attribute='get_api_url', readonly=True, null=True)
     class Meta:
         queryset = DerivedFile.objects.all()
         resource_name = 'derivedfile'

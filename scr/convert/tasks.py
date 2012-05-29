@@ -44,7 +44,7 @@ def create_pdf(document_pk, type='pdf', callback=None):
     statsd.incr('attemped_conversions')
 
     # Get the file using the absolute url
-    url = 'http://localhost:8000' + doc[u'absolute_url']
+    url = 'http://localhost:8000' + doc[u'download_url']
 
     req = requests.get(url, auth=auth)
     if req.status_code != 200:
@@ -186,7 +186,7 @@ def create_pngs(document_pk, type='pngs', callback=None):
         return False
 
     # Get the file using the absolute url
-    url = 'http://localhost:8000' + pdf[u'absolute_url']
+    url = 'http://localhost:8000' + pdf[u'download_url']
 
     req = requests.get(url, auth)
     if req.status_code != 200:
