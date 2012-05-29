@@ -104,7 +104,7 @@ def get_upload_details(request):
         temp_file = request.session['upload_file']
 
         # Setup a solr instance for extract file contents
-        solr = Solr(settings.SOLR_URL, timeout=20)
+        solr = Solr(settings.SOLR_URL, timeout=40)
         data = {'filename': temp_file.name}
 
         try:
