@@ -29,7 +29,7 @@ register_openers()
 
 # Celery tasks
 auth = HTTPDigestAuth('bot','93bebc404a38b620b84505644d7ea934e7957331')
-api = slumber.API('http://localhost:8000/api/v1',
+api = slumber.API('http://localhost/api/v1',
     auth=auth)
 
 @task(acks_late=True)
@@ -44,7 +44,7 @@ def create_pdf(document_pk, type='pdf', callback=None):
     statsd.incr('attemped_conversions')
 
     # Get the file using the absolute url
-    url = 'http://localhost:8000' + doc[u'download_url']
+    url = 'http://localhost' + doc[u'download_url']
 
     req = requests.get(url, auth=auth)
     if req.status_code != 200:
@@ -133,7 +133,7 @@ def create_pdf(document_pk, type='pdf', callback=None):
         # Create a new derivedfile pack
         pack = api.derivedpack.post({"type": "pdf", "document": doc["resource_uri"]})
 
-        url = "http://localhost:8000/api/v1/document/%s/pack/%s/derived_file/" % (
+        url = "http://localhost/api/v1/document/%s/pack/%s/derived_file/" % (
             document_pk, pack["id"])
 
         datagen, headers = multipart_encode({'file': new_file, 'order':'0'})
@@ -186,7 +186,7 @@ def create_pngs(document_pk, type='pngs', callback=None):
         return False
 
     # Get the file using the absolute url
-    url = 'http://localhost:8000' + pdf[u'download_url']
+    url = 'http://localhost' + pdf[u'download_url']
 
     req = requests.get(url, auth=auth)
     if req.status_code != 200:
@@ -257,7 +257,7 @@ def create_pngs(document_pk, type='pngs', callback=None):
         file = open(filename, 'rb')
         try:
             log.debug('attemping to upload: %s' % filename)
-            url = "http://localhost:8000/api/v1/document/%s/pack/%s/derived_file/" % (
+            url = "http://localhost/api/v1/document/%s/pack/%s/derived_file/" % (
                 document_pk, pack["id"])
 
             datagen, headers = multipart_encode({

@@ -180,6 +180,7 @@ INSTALLED_APPS = (
     'djcelery',
     "kombu.transport.django",
     'tastypie',
+    'gunicorn',
 
     # Our apps :)
     'upload',
