@@ -21,7 +21,7 @@ class DocumentIndex(indexes.RealTimeSearchIndex):
         data = super(DocumentIndex, self).prepare(obj)
 
         # Setup a solr instance for extract file contents
-        solr = Solr(settings.SOLR_URL, timeout=20)
+        solr = Solr(settings.SOLR_URL, timeout=60)
 
         # Pass both the original and the PDF version to solr.
         # Then commit whichever one returns the most raw data
