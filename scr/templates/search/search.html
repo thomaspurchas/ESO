@@ -53,7 +53,7 @@ padding-right: 20px;
 
                     {% if result.object.has_pdf %}
                     <a href="{{ result.object.get_absolute_url }}pdf">{{ result.object.title }}</a>
-                        <iframe src="{{ result.object.get_absolute_url }}pdf" class="none"></iframe>
+                        <!--<iframe src="{{ result.object.get_absolute_url }}pdf" class="none"></iframe>-->
                     {% else %}
                     <a href="{{ result.object.get_absolute_url }}">{{ result.object.title }}</a>
                     {% endif %}
