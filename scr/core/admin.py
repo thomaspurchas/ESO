@@ -70,9 +70,11 @@ class DerivedFileAdmin(admin.ModelAdmin):
     list_display = ['__unicode__', 'order']
     readonly_fields = ['admin_image']
     raw_id_fields = ['pack']
+    list_filter = ['pack__type']
 
 class DerivedPackAdmin(admin.ModelAdmin):
     readonly_fields = ['derived_from']
+    list_filter = ['type']
     search_fields = ['type', 'derived_from__title']
 
 admin.site.register(Document, DocumentAdmin)
