@@ -1,3 +1,4 @@
+{% load url from future %}
 <style type="text/css">
 .slide {width:600px;float:right;margin-bottom:50px;border:10px solid whitesmoke;
 min-height: 450px;
@@ -57,8 +58,8 @@ padding-right: 20px;
                     <a href="{{ result.object.get_absolute_url }}">{{ result.object.title }}</a>
                     {% endif %}
                     {% if result.object.has_pngs %}
-                        <a href="{% url serve_document result.object.id 'pdf' %}">
-                            <img class="slide" src="{% url serve_document_thumbnail result.object.id 600 %}" />
+                        <a href="{% url 'serve_document result.object.id' 'pdf' %}">
+                            <img class="slide" src="{% url 'serve_document_thumbnail' result.object.id 600 %}" />
                         </a>
                     {% endif %}
                 </p>
@@ -74,6 +75,7 @@ padding-right: 20px;
                 </div>
             {% endif %}
         {% else %}
+            <a href="{% url 'upload.views.new_upload' %}">Upload some shiz</a>
             {# Show some example queries to run, maybe query syntax, something else? #}
         {% endif %}
     </form>
