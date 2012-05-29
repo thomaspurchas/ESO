@@ -211,6 +211,7 @@ def create_pngs(document_pk, type='pngs', callback=None):
     return_code = subprocess.call(["gs", "-sDEVICE=png16m",
         "-sOutputFile=%s/slide-%s.png" % (temp_folder, '%03d'),
         "-r600", "-dNOPAUSE", "-dBATCH", "-dMaxBitmap=1000000000",
+        "-dFirstPage=1", "-dLastPage=1",
         "%s" % file.name])
 
     if return_code != 0:
