@@ -6,6 +6,8 @@ from haystack import indexes
 from haystack import site
 from core.models import Document, DerivedFile
 
+# Setup a solr instance for extract file contents
+solr = Solr(settings.SOLR_URL, timeout=240)
 
 class DocumentIndex(indexes.RealTimeSearchIndex):
     text = indexes.CharField(document=True)
@@ -20,34 +22,41 @@ class DocumentIndex(indexes.RealTimeSearchIndex):
     def prepare(self, obj):
         data = super(DocumentIndex, self).prepare(obj)
 
-        # Setup a solr instance for extract file contents
-        solr = Solr(settings.SOLR_URL, timeout=240)
+        # Check to see if we have extracted and stored the file content in the DB
+        # before. If not extract the content.
+        if obj.extracted_content == None:
 
-        # Pass both the original and the PDF version to solr.
-        # Then commit whichever one returns the most raw data
+            # Pass both the original and the PDF version to solr.
+            # Then commit whichever one returns the most raw data
 
-        # Get the file
-        raw_file = obj.file
+            # Get the file
+            raw_file = obj.file
 
-        file_extracted_data = solr.extract(raw_file)['contents']
+            file_extracted_data = solr.extract(raw_file)['contents']
 
-        # Get PDF
-        pdf_file_query = DerivedFile.objects.filter(pack__derived_from=obj)
-        pdf_file_query = pdf_file_query.filter(pack__type='pdf')
+            # Store the data in the obj and save it
+            obj.extracted_content = file_extracted_data
 
-        if len(pdf_file_query):
-            pdf_file = pdf_file_query[0].file
+            obj.save()
+
+        # Now get its PDF derived file and check that for extracted content
+        pdf_derivedfiles = DerivedFile.objects.filter(pack__derived_from=obj
+            ).filter(pack__type='pdf')
+
+        if pdf_derivedfiles and (pdf_derivedfiles[0].extracted_content == None):
+            pdf_derivedfile = pdf_derivedfiles[0]
+
+            pdf_file = pdf_derivedfile.file
             pdf_extracted_data = solr.extract(pdf_file)['contents']
-        else:
-            pdf_extracted_data = ''
 
-        if len(pdf_extracted_data) >  len(file_extracted_data):
-            data['text'] = pdf_extracted_data
-        else:
-            data['text'] = file_extracted_data
+            pdf_derivedfile.extracted_content = pdf_extracted_data
+            pdf_derivedfile.save()
 
-        for tag in obj.tags.all():
-            data['text'] += ' ' + tag.title
+        data['text'] = obj.extracted_content
+
+        if pdf_derivedfiles:
+            if len(pdf_derivedfiles[0].extracted_content) > len(obj.extracted_content):
+                data['text'] = pdf_derivedfiles[0].extracted_content
 
         return data
 

@@ -66,6 +66,8 @@ class Document(models.Model):
     file = models.FileField(upload_to='documents/%Y/%m/%d')
     md5_sum = models.CharField(max_length=64, unique=True)
 
+    extracted_content = models.TextField(blank=True, null=True)
+
     objects = Md5Manager()
 
     def __unicode__(self):
@@ -128,6 +130,8 @@ class DerivedFile(models.Model):
     file = models.FileField(upload_to=generate_filename)
     md5_sum = models.CharField(max_length=64, unique=True)
     order = models.IntegerField(default=0)
+
+    extracted_content = models.TextField(blank=True, null=True)
 
     pack = models.ForeignKey(DerivedPack, related_name='files')
 
