@@ -20,6 +20,9 @@ from convert.tasks import create_pdf, create_pngs
 
 log = logging.getLogger(__name__)
 
+# Setup a solr instance for extract file contents
+solr = Solr(settings.SOLR_URL, timeout=20)
+
 def clean_temp_file(file):
     # Helper function to clean up temp files
     file.file.delete()
@@ -103,12 +106,14 @@ def get_upload_details(request):
     if request.session.get('upload_file', False):
         temp_file = request.session['upload_file']
 
-        # Setup a solr instance for extract file contents
-        solr = Solr(settings.SOLR_URL, timeout=40)
         data = {'filename': temp_file.name}
 
         try:
-            file_data = solr.extract(temp_file.file)
+            try:
+                file_data = solr.extract(temp_file.file)
+            except IOError, e:
+                log.warn('Solr extraction failed: %s', e)
+                file_data = ['metadata'] = ''
             log.debug(file_data['metadata'])
 
             try:
