@@ -5,6 +5,7 @@ from django.conf import settings
 from haystack import indexes
 from haystack import site
 from core.models import Document, DerivedFile
+from celery.task import task
 
 # Setup a solr instance for extract file contents
 solr = Solr(settings.SOLR_URL, timeout=240)

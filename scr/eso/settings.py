@@ -181,6 +181,7 @@ INSTALLED_APPS = (
     "kombu.transport.django",
     'tastypie',
     'gunicorn',
+    'celery_haystack',
 
     # Our apps :)
     'upload',
