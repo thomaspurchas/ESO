@@ -10,7 +10,7 @@ from celery.task import task
 # Setup a solr instance for extract file contents
 solr = Solr(settings.SOLR_URL, timeout=240)
 
-class DocumentIndex(indexes.RealTimeSearchIndex):
+class DocumentIndex(celery_haystack.indexes.CelerySearchIndex):
     text = indexes.CharField(document=True)
     title = indexes.CharField(model_attr='title', boost=1.125)
     tags = indexes.MultiValueField(faceted=True)
