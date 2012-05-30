@@ -2,6 +2,7 @@ from pysolr import Solr
 
 from django.conf import settings
 
+from celery_haystack.indexes import CelerySearchIndex
 from haystack import indexes
 from haystack import site
 from core.models import Document, DerivedFile
@@ -10,7 +11,7 @@ from celery.task import task
 # Setup a solr instance for extract file contents
 solr = Solr(settings.SOLR_URL, timeout=240)
 
-class DocumentIndex(celery_haystack.indexes.CelerySearchIndex):
+class DocumentIndex(CelerySearchIndex):
     text = indexes.CharField(document=True)
     title = indexes.CharField(model_attr='title', boost=1.125)
     tags = indexes.MultiValueField(faceted=True)
