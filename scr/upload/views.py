@@ -4,6 +4,8 @@ from pysolr import Solr, SolrError
 from os import path
 import logging
 
+from django_statsd.clients import statsd
+
 from django.conf import settings
 
 from django.core.urlresolvers import reverse
@@ -42,12 +44,13 @@ def new_upload(request):
             temp_file = TempFile(file = request.FILES['upload_file'])
             temp_file.name = request.FILES['upload_file'].name
 
-            # Create the md5 sum of the file
-            sum = md5()
-            for chunk in temp_file.file.chunks():
-                sum.update(chunk)
+            # Create the md5 sum of the file, and time is
+            with statsd.timer('upload.md5_calc_time'):
+                sum = md5()
+                for chunk in temp_file.file.chunks():
+                    sum.update(chunk)
 
-            temp_file.md5_sum = sum.hexdigest()
+                temp_file.md5_sum = sum.hexdigest()
 
             # First check that we dont already have a copy of the file
             if not Document.objects.unique_md5(temp_file.md5_sum, (DerivedFile,)):
