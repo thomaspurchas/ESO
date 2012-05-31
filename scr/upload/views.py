@@ -113,7 +113,7 @@ def get_upload_details(request):
                 file_data = solr.extract(temp_file.file)
             except IOError, e:
                 log.warn('Solr extraction failed: %s', e)
-                file_data{'metadata': None}
+                file_data = {'metadata': None}
             log.debug(file_data['metadata'])
 
             try:
