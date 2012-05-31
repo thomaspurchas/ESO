@@ -31,11 +31,11 @@ register_openers()
 # Useful stuff
 API_SERVER_URL = settings.API_SERVER_URL or 'http://localhost'
 API_USERNAME = settings.API_USERNAME or 'bot'
-API_KEY = settings.API_KEY or '93bebc404a38b620b84505644d7ea934e7957331'
+API_KEY = settings.API_KEY or 'c41d07be926902d5da58b9e31147650844c2b9d9'
 JOD_URL = settings.JOD_URL or 'http://localhost:8080/converter/service'
 
 # Celery tasks
-auth = HTTPDigestAuth('bot','93bebc404a38b620b84505644d7ea934e7957331')
+auth = HTTPDigestAuth(API_USERNAME, API_KEY)
 api = slumber.API(API_SERVER_URL + '/api/v1',
     auth=auth)
 
