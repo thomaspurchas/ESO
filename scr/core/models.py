@@ -63,7 +63,7 @@ class Document(models.Model):
     author = models.ForeignKey(Lecturer, null=True)
     module = models.ForeignKey(Module, null=True)
 
-    file = models.FileField(upload_to='documents/%Y/%m/%d')
+    file = models.FileField(upload_to='documents/%Y/%m/%d', max_length=200)
     md5_sum = models.CharField(max_length=64, unique=True)
 
     extracted_content = models.TextField(blank=True, null=True)
@@ -127,7 +127,7 @@ class DerivedFile(models.Model):
 
         return path
 
-    file = models.FileField(upload_to=generate_filename)
+    file = models.FileField(upload_to=generate_filename, max_length=200)
     md5_sum = models.CharField(max_length=64, unique=True)
     order = models.IntegerField(default=0)
 
