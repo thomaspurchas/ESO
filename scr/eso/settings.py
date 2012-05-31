@@ -249,4 +249,5 @@ LOGGING = {
 
 try:
     from local_settings import *
-except
+except:
+  pass
