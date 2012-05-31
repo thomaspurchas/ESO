@@ -113,12 +113,13 @@ def get_upload_details(request):
                 file_data = solr.extract(temp_file.file)
             except IOError, e:
                 log.warn('Solr extraction failed: %s', e)
-                file_data['metadata'] = ''
+                file_data{'metadata': None}
             log.debug(file_data['metadata'])
 
             try:
-                data['title'] = file_data['metadata']['title'][0] or data['filename']
-                data['author'] = file_data['metadata']['Author'][0]
+                if file_data['metadata']:
+                    data['title'] = file_data['metadata']['title'][0] or data['filename']
+                    data['author'] = file_data['metadata']['Author'][0]
             except:
                 pass
 
