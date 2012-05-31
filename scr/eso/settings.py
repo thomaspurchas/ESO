@@ -52,6 +52,12 @@ djcelery.setup_loader()
 BROKER_URL = "django://"
 #CELERY_ALWAYS_EAGER = DEBUG
 
+# This is all stuff for the pdf and png tasks
+API_SERVER_URL = 'http://localhost'
+API_USERNAME = 'bot'
+API_KEY = '93bebc404a38b620b84505644d7ea934e7957331'
+JOD_URL = 'http://localhost:8080/converter/service'
+
 # Useful SITE_ROOT variable
 SITE_ROOT = '/'.join(os.path.dirname(__file__).split('/')[0:-2])
 
@@ -243,5 +249,4 @@ LOGGING = {
 
 try:
     from local_settings import *
-except:
-    pass
+except

@@ -12,6 +12,7 @@ import Image
 import slumber
 import requests
 from django_statsd.clients import statsd
+from django.conf import settings
 from requests.auth import HTTPDigestAuth
 from poster.encode import multipart_encode
 from poster.streaminghttp import register_openers
@@ -27,9 +28,15 @@ statsd
 # Register the streaming http handlers with urllib2
 register_openers()
 
+# Useful stuff
+API_SERVER_URL = settings.API_SERVER_URL or 'http://localhost'
+API_USERNAME = settings.API_USERNAME or 'bot'
+API_KEY = settings.API_KEY or '93bebc404a38b620b84505644d7ea934e7957331'
+JOD_URL = settings.JOD_URL or 'http://localhost:8080/converter/service'
+
 # Celery tasks
 auth = HTTPDigestAuth('bot','93bebc404a38b620b84505644d7ea934e7957331')
-api = slumber.API('http://localhost/api/v1',
+api = slumber.API(API_SERVER_URL + '/api/v1',
     auth=auth)
 
 @task(acks_late=True)
@@ -44,7 +51,7 @@ def create_pdf(document_pk, type='pdf', callback=None):
     statsd.incr('attemped_conversions')
 
     # Get the file using the absolute url
-    url = 'http://localhost' + doc[u'download_url']
+    url = API_SERVER_URL + doc[u'download_url']
 
     req = requests.get(url, auth=auth)
     if req.status_code != 200:
@@ -105,7 +112,7 @@ def create_pdf(document_pk, type='pdf', callback=None):
                 break
 
     try:
-        req = urllib2.Request("http://localhost:8080/converter2/service",
+        req = urllib2.Request("http://localhost:8080/converter/service",
             yielder(), headers)
 
         # Get the return file
@@ -133,7 +140,7 @@ def create_pdf(document_pk, type='pdf', callback=None):
         # Create a new derivedfile pack
         pack = api.derivedpack.post({"type": "pdf", "document": doc["resource_uri"]})
 
-        url = "http://localhost/api/v1/document/%s/pack/%s/derived_file/" % (
+        url = API_SERVER_URL + "/api/v1/document/%s/pack/%s/derived_file/" % (
             document_pk, pack["id"])
 
         datagen, headers = multipart_encode({'file': new_file, 'order':'0'})
@@ -186,7 +193,7 @@ def create_pngs(document_pk, type='pngs', callback=None):
         return False
 
     # Get the file using the absolute url
-    url = 'http://localhost' + pdf[u'download_url']
+    url = API_SERVER_URL + pdf[u'download_url']
 
     req = requests.get(url, auth=auth)
     if req.status_code != 200:
@@ -257,7 +264,7 @@ def create_pngs(document_pk, type='pngs', callback=None):
         file = open(filename, 'rb')
         try:
             log.debug('attemping to upload: %s' % filename)
-            url = "http://localhost/api/v1/document/%s/pack/%s/derived_file/" % (
+            url = API_SERVER_URL + "/api/v1/document/%s/pack/%s/derived_file/" % (
                 document_pk, pack["id"])
 
             datagen, headers = multipart_encode({
