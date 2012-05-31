@@ -26,6 +26,8 @@ class DocumentIndex(CelerySearchIndex):
         return [tag.title for tag in obj.tags.all()]
 
     def prepare(self, obj):
+        log.info('Indexing: %s - %s', obj.id, obj.title)
+
         data = super(DocumentIndex, self).prepare(obj)
 
         # Check to see if we have extracted and stored the file content in the DB
