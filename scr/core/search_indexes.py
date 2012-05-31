@@ -1,6 +1,7 @@
 import logging
 
 from pysolr import Solr, SolrError
+import httplib
 
 from django.conf import settings
 
@@ -46,7 +47,7 @@ class DocumentIndex(CelerySearchIndex):
                 obj.extracted_content = file_extracted_data
 
                 obj.save()
-            except (SolrError, IOError), e:
+            except (SolrError, IOError, httplib), e:
                 # Log and move on
                 log.error('Unable to extract content from Document %s - %s because %s',
                     obj.id, obj.title, e)
@@ -67,15 +68,19 @@ class DocumentIndex(CelerySearchIndex):
             except (SolrError, IOError), e:
                 # Log and move on
                 log.error('Unable to extract content from DerivedFile %s - %s because %s',
-                    obj.id, obj.title, e)
+                    pdf_derivedfile.id, pdf_derivedfile.file, e)
 
         data['text'] = obj.extracted_content or ''
 
-        if pdf_derivedfiles and obj.extracted_content:
+        if (pdf_derivedfiles and pdf_derivedfiles[0].extracted_content and
+            obj.extracted_content):
+
             if len(pdf_derivedfiles[0].extracted_content) > len(obj.extracted_content):
                 data['text'] = pdf_derivedfiles[0].extracted_content
 
-        elif pdf_derivedfiles and not obj.extracted_content:
+        elif (pdf_derivedfiles and pdf_derivedfiles[0].extracted_content and
+            not obj.extracted_content):
+
             data['text'] = pdf_derivedfiles[0].extracted_content
 
         return data
