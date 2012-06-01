@@ -45,12 +45,13 @@ def api_document_upload_view(request):
         if form.is_valid():
             new_file = form.save(commit=False)
 
-            sum = md5()
-            for chunk in new_file.file.chunks():
-                sum.update(chunk)
+            with statsd.timer('upload.md5_calc_time'):
+                sum = md5()
+                for chunk in new_file.file.chunks():
+                    sum.update(chunk)
 
-            md5_sum = sum.hexdigest()
-            new_file.md5_sum = md5_sum
+                md5_sum = sum.hexdigest()
+                new_file.md5_sum = md5_sum
 
             new_file.title = new_file.file.name
 
