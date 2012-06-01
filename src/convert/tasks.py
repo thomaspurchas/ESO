@@ -29,10 +29,10 @@ statsd
 register_openers()
 
 # Useful stuff
-API_SERVER_URL = settings.API_SERVER_URL or 'http://localhost'
-API_USERNAME = settings.API_USERNAME or 'bot'
-API_KEY = settings.API_KEY or 'c41d07be926902d5da58b9e31147650844c2b9d9'
-JOD_URL = settings.JOD_URL or 'http://localhost:8080/converter/service'
+API_SERVER_URL = getattr(settings, 'API_SERVER_URL', 'http://localhost:8000')
+API_USERNAME = getattr(settings, 'API_USERNAME', 'bot')
+API_KEY = getattr(settings, 'API_KEY', '123')
+JOD_URL = getattr(settings, 'JOD_URL', 'http://localhost:8080/converter2/service')
 
 # Celery tasks
 auth = HTTPDigestAuth(API_USERNAME, API_KEY)
@@ -64,7 +64,7 @@ def create_pdf(document_pk, type='pdf', callback=None):
 
     if not 'content-type' in req.headers:
         statsd.incr('failed_conversions')
-        log.error('No mime type returned will document request')
+        log.error('No mime type returned with document request')
         return False
 
     if req.headers['content-type'] == 'application/pdf':
@@ -112,8 +112,7 @@ def create_pdf(document_pk, type='pdf', callback=None):
                 break
 
     try:
-        req = urllib2.Request("http://localhost:8080/converter/service",
-            yielder(), headers)
+        req = urllib2.Request(JOD_URL, yielder(), headers)
 
         # Get the return file
         return_file = urllib2.urlopen(req)
