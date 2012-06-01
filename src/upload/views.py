@@ -3,6 +3,9 @@ from hashlib import md5
 from pysolr import Solr, SolrError
 from os import path
 import logging
+import json
+
+from tastypie.authentication import DigestAuthentication
 
 from django_statsd.clients import statsd
 
@@ -13,9 +16,9 @@ from django.http import HttpResponseRedirect
 from django.http import HttpResponse
 from django.shortcuts import render_to_response
 from django.template import RequestContext
+from django.views.decorators.csrf import csrf_exempt
 
-from upload.forms import NewUploadForm
-from upload.forms import UploadDetailForm
+from upload.forms import NewUploadForm, UploadDetailForm, ApiDocumentUploadForm
 from core.models import Document, DerivedFile
 from upload.models import TempFile
 from convert.tasks import create_pdf, create_pngs
@@ -30,6 +33,55 @@ def clean_temp_file(file):
     file.file.delete()
     file.delete()
 
+@csrf_exempt
+def api_document_upload_view(request):
+    if request.path.startswith('/api/'):
+        DigestAuthentication().is_authenticated(request)
+
+    if request.method == 'POST':
+        log.debug('Document Post')
+        # Process the request
+        form = ApiDocumentUploadForm(request.POST, request.FILES)
+        if form.is_valid():
+            new_file = form.save(commit=False)
+
+            sum = md5()
+            for chunk in new_file.file.chunks():
+                sum.update(chunk)
+
+            md5_sum = sum.hexdigest()
+            new_file.md5_sum = md5_sum
+
+            new_file.title = new_file.file.name
+
+            if not Document.objects.unique_md5(md5_sum, (DerivedFile,)):
+
+                response_data = {
+                        'result': 'failure',
+                        'success': False,
+                        'message': 'file already uploaded'
+                    }
+            else:
+                new_file.save()
+                response_data = {
+                    'result': 'success',
+                    'success': True,
+                    'message': 'File uploaded'
+                }
+        else:
+            response_data = {
+                'result': 'failure',
+                'success': False,
+                'message': 'invalid form'
+            }
+    else:
+        response_data = {
+            'result': 'failure',
+            'success': False,
+            'message': 'you need to send me something!'
+        }
+
+    return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
 def new_upload(request):
     # Generate and return a simple upload page
@@ -59,7 +111,7 @@ def new_upload(request):
                 clean_temp_file(temp_file)
                 return render_to_response('upload/new_upload.html',
                     {'form': form, 'error': 'File aready uploaded'},
-                    context_instance=RequestContext(request)
+                    #context_instance=RequestContext(request)
                 )
             else:
                 temp_file.save()

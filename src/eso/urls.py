@@ -35,6 +35,8 @@ urlpatterns = patterns('',
     # Api urls
     url(r'^api/v1/document/([0-9]+)/pack/([0-9]+)/derived_file/$',
         'core.views.api_derived_document_upload'),
+    url(r'^api/v1/document/upload/$',
+        'upload.views.api_document_upload_view'),
     url(r'^api/v1/download_document/(\d+)/(?:(\w+)/)?(?:(\d+)/)?$',
         'core.views.serve_document', name='api_serve_document'),
     url(r'^api/', include(api_v1.urls)),
