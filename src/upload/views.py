@@ -63,6 +63,9 @@ def api_document_upload_view(request):
                     }
             else:
                 new_file.save()
+                # Create a PDF and pngs
+                create_pdf.delay(new_file.id,
+                    callback=create_pngs.subtask((new_file.id,)))
                 response_data = {
                     'result': 'success',
                     'success': True,
