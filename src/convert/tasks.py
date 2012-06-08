@@ -130,7 +130,7 @@ def create_pdf(document_pk, type='pdf', callback=None):
         if e.fp:
             msg += ' - %s' % e.fp.read()
         log.error('Conversion service error: %s - %s - %s', e.hdrs, e.code, msg)
-        create_pdf.retry()
+        create_pdf.retry(exc=e)
 
     # Seek file to beginning so we can post it back to the main service
     try:
