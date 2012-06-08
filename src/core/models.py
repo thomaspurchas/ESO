@@ -9,6 +9,9 @@ from file_management import delete_file_on_model_delete, generate_md5_sum
 class Email(models.Model):
     email = models.CharField(max_length=50)
 
+    def __unicode__(self):
+        return self.email
+
 # MD5 manager. Provides a method to check for any file with the same md5 sum
 # as the one provided against the provided models in addition to the current model.
 class Md5Manager(models.Manager):
@@ -39,10 +42,10 @@ class Lecturer(models.Model):
     salutation = models.CharField(max_length=10)
     username = models.CharField(max_length=10)
 
-    def get_full_name():
-        return u'%s %s %s' % self.salutation, self.first_name, self.last_name
+    def get_full_name(self):
+        return u'%s %s %s' % (self.salutation, self.first_name, self.last_name)
 
-    def __unicode__():
+    def __unicode__(self):
         return get_full_name()
 
 class LecturerAliases(models.Model):
@@ -54,10 +57,10 @@ class Module(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True)
 
-    def get_complete_title():
-        return u'%s - %s' % self.short_code, self.title
+    def get_complete_title(self):
+        return u'%s - %s' % (self.short_code, self.title)
 
-    def __unicode__():
+    def __unicode__(self):
         return self.get_complete_title()
 
 class Document(models.Model):
