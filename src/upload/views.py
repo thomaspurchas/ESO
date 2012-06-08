@@ -17,6 +17,7 @@ from django.http import HttpResponse
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.decorators import login_required
 
 from upload.forms import NewUploadForm, UploadDetailForm, ApiDocumentUploadForm
 from core.models import Document, DerivedFile
@@ -87,6 +88,7 @@ def api_document_upload_view(request):
 
     return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
+@login_required
 def new_upload(request):
     # Generate and return a simple upload page
 
@@ -135,6 +137,7 @@ def new_upload(request):
         context_instance=RequestContext(request)
     )
 
+@login_required
 def get_upload_details(request):
     # Handle the file upload
     if request.method == 'POST':
