@@ -21,7 +21,7 @@ sqs = SearchQuerySet().facet('tags')
 urlpatterns = patterns('',
     # Examples:
     url(r'^$', 'core.views.home', name='home'),
-
+    url(r'^thank-you/$', 'core.views.email_submit'),
     url(r'^upload/$', 'upload.views.new_upload'),
     url(r'^getdetails/$', 'upload.views.get_upload_details'),
     url(r'^document/(\d+)/thumbnail/(\d+)/(?:(\w+)/)?$', 'core.views.serve_document_thumbnail',
