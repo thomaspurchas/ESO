@@ -6,6 +6,9 @@ from django.db.models.signals import pre_delete
 
 from file_management import delete_file_on_model_delete, generate_md5_sum
 
+class Email(models.Model):
+    email = models.CharField(max_length=50)
+
 # MD5 manager. Provides a method to check for any file with the same md5 sum
 # as the one provided against the provided models in addition to the current model.
 class Md5Manager(models.Manager):

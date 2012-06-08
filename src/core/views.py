@@ -10,15 +10,30 @@ from tastypie.authentication import DigestAuthentication
 from django.conf import settings
 from django.views.static import serve
 from django.conf import settings
+from django.shortcuts import render
 from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import get_object_or_404
 
 from utils import get_object_or_none
-from core.models import Document, DerivedFile, DerivedPack
-from core.forms import ApiDerivedFileUploadForm
+from core.models import Document, DerivedFile, DerivedPack, Email
+from core.forms import ApiDerivedFileUploadForm, PostEmail
 
 log = logging.getLogger(__name__)
+
+def email_submit(request):
+    if request.method == "POST":
+        form = PostEmail(request.POST)
+        if form.is_valid():
+            if not Email.objects.filter(email=form.cleaned_data['email'].lower()):
+                email = Email()
+                email.email = form.cleaned_data['email'].lower()
+                email.save()
+
+            return render(request, 'thank-you.html')
+
+
+    return HttpResponseRedirect('/search/')
 
 def home(request):
     return HttpResponseRedirect('/search/')
@@ -104,12 +119,11 @@ def serve_document_thumbnail(request, document_pk, width, format=None):
         return serve(request, image_file, '/')
 
 # A simple view that allows the upload of new derived files from worker machines
-@csrf_exempt # Turn off csrf because its silly for an api.
+f # Turn off csrf because its silly for an api.
 def api_derived_document_upload(request, document_pk, pack_pk):
 
-    # Basic auth for later
-    #if not getattr(request.META['REMOTE_USER'], False) == USER:
-    #    return
+    if request.path.startswith('/api/'):
+        DigestAuthentication().is_authenticated(request)
 
     if request.method == 'POST':
         log.debug('Derived File Post')
@@ -155,13 +169,13 @@ def api_derived_document_upload(request, document_pk, pack_pk):
                 except Document.DoesNotExist:
                     response_data = {
                             'result': 'failure',
-                            'success': false,
+                            'success': True,
                             'message': 'the document does not exist'
                         }
                 except DerivedPack.DoesNotExist:
                     response_data = {
                             'result': 'failure',
-                            'success': false,
+                            'success': True,
                             'message': 'the pack does not exist'
                         }
 
