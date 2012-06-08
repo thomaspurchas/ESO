@@ -1,4 +1,4 @@
-from core.models import Document, Tag, DerivedFile, DerivedPack
+from core.models import Document, Tag, DerivedFile, DerivedPack, Email
 from convert.tasks import create_pngs, create_pdf
 
 from tastypie.admin import ApiKeyInline
@@ -81,3 +81,4 @@ admin.site.register(Document, DocumentAdmin)
 admin.site.register(Tag, TagAdmin)
 admin.site.register(DerivedFile, DerivedFileAdmin)
 admin.site.register(DerivedPack, DerivedPackAdmin)
+admin.site.register(Email)
