@@ -9,4 +9,5 @@ include/*
 BBedit/eso.bbprojectd/Unix Worksheet.worksheet
 BBedit/eso.bbprojectd/Scratchpad.txt
 media/*
-scr/eso/local_settings.py
+src/eso/local_settings.py
+*.pid
