@@ -119,7 +119,7 @@ def serve_document_thumbnail(request, document_pk, width, format=None):
         return serve(request, image_file, '/')
 
 # A simple view that allows the upload of new derived files from worker machines
-f # Turn off csrf because its silly for an api.
+@csrf_exempt # Turn off csrf because its silly for an api.
 def api_derived_document_upload(request, document_pk, pack_pk):
 
     if request.path.startswith('/api/'):
