@@ -4,6 +4,7 @@ import os
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models.signals import pre_delete
+from django.conf import settings
 
 from file_management import delete_file_on_model_delete, generate_md5_sum
 
@@ -101,7 +102,8 @@ class Document(models.Model):
         return False
 
     def size(self):
-        return os.stat(self.file.name).ST_SIZE/1000000.0
+        return os_path.join(settings.MEDIA_ROOT,
+            os.stat(self.file.name).ST_SIZE/1000000.0)
 
     def generate_md5_sum(self):
         self.md5_sum = generate_md5_sum(self.file)
