@@ -65,7 +65,22 @@ def serve_document(request, pk, type=None, order=None):
     if not object:
         raise Http404
 
-    return serve(request, object.file.name, settings.MEDIA_ROOT)
+    if settings.DEBUG:
+        return serve(request, object.file.name, settings.MEDIA_ROOT)
+    else:
+        fullpath = os.path.join(settings.MEDIA_ROOT, object.file.name)
+        mimetype, encoding = mimetypes.guess_type(fullpath)
+        mimetype = mimetype or 'application/octet-stream'
+        response = HttpResponse(mimetype=mimetype)
+
+        if encoding:
+            response["Content-Encoding"] = encoding
+        try:
+            response['X-Accel-Redirect'] = object.file.name
+        except UnicodeEncodeError:
+            raise Http404
+
+        return response
 
 def serve_document_thumbnail(request, document_pk, width, format=None):
     if not format:
