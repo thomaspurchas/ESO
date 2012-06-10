@@ -102,8 +102,8 @@ class Document(models.Model):
         return False
 
     def size(self):
-        return os_path.join(settings.MEDIA_ROOT,
-            os.stat(self.file.name).ST_SIZE/1000000.0)
+        return os.stat(
+            os_path.join(settings.MEDIA_ROOT,self.file.name)).ST_SIZE/1000000.0
 
     def generate_md5_sum(self):
         self.md5_sum = generate_md5_sum(self.file)
