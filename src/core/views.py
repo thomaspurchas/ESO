@@ -3,6 +3,7 @@ import logging
 import os
 from hashlib import md5
 import json
+import mimetypes
 
 import Image
 from tastypie.authentication import DigestAuthentication
