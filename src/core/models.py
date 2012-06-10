@@ -1,4 +1,5 @@
 from os import path as os_path
+import os
 
 from django.core.urlresolvers import reverse
 from django.db import models
@@ -98,6 +99,9 @@ class Document(models.Model):
             return True
 
         return False
+
+    def size(self):
+        return os.stat(self.file.name).ST_SIZE/1000000.0
 
     def generate_md5_sum(self):
         self.md5_sum = generate_md5_sum(self.file)

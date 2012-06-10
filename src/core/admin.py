@@ -23,8 +23,8 @@ class TaggedInline(admin.TabularInline):
 class DocumentAdmin(admin.ModelAdmin):
     search_fields = ['title', 'id']
     list_filter = ['author', 'module', 'tags']
-    list_display = ['title', 'id', 'admin_tags','has_pdf', 'has_pngs']
-    readonly_fields = ['md5_sum', 'has_pdf', 'has_pngs']
+    list_display = ['title', 'id', 'admin_tags','has_pdf', 'has_pngs', 'size']
+    readonly_fields = ['md5_sum', 'has_pdf', 'has_pngs', 'size']
 
     inlines = [
         TaggedInline,
