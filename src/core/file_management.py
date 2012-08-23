@@ -4,7 +4,7 @@ import hashlib
 def delete_file_on_model_delete(sender, instance, **kargs):
     file = getattr(instance, 'file', None)
     if file:
-        file.delete()
+        file.delete(save=False)
 
 def generate_md5_sum(file_object):
     if file_object:
