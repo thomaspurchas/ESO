@@ -404,7 +404,7 @@ p.build-missing { font-size: .8em; color: #9d9a55; margin: 0 0 3px; }
 
             {% if query %}
                 <!-- Begin faceting. -->
-                <h2>Filter By Tag</h2>
+                <h2>Filter By Site</h2>
 
                 <div>
                     <ul id="facet-list">
@@ -425,18 +425,12 @@ p.build-missing { font-size: .8em; color: #9d9a55; margin: 0 0 3px; }
 
                 {% for result in page.object_list %}
                     <p style="clear:both">
-
-                        {% if result.object.has_pdf %}
-                        <a href="{{ result.object.get_absolute_url }}pdf" onClick="javascript: _gaq.push(['_trackPageview', '/document/{{ result.object.id }}']);">{{ result.object.title }}</a>
-                            <!--<iframe src="{{ result.object.get_absolute_url }}pdf" class="none"></iframe>-->
-                        {% else %}
-                        <a href="{{ result.object.get_absolute_url }}" onClick="javascript: _gaq.push(['_trackPageview', '/document/{{ result.object.id }}']);">{{ result.object.title }}</a>
-                        {% endif %}
-                        {% if result.object.has_pngs %}
-                            <a href="{% url 'serve_document' result.object.id 'pdf' %}">
-                                <img class="slide" src="{% url 'serve_document_thumbnail' result.object.id 600 %}" />
-                            </a>
-                        {% endif %}
+                        <a href="{{ result.object.get_absolute_url }}" onClick="javascript: _gaq.push(['_trackPageview', '/document/{{ result.object.id }}']);">{{ result.object.url }}</a>
+						<div style="width: 500px; height: 500px; border: 3px solid #CCC; float: right; overflow: auto;">
+							<a href="{{ result.object.get_absolute_url }}">
+							<img width="500px" src="{{ result.object.get_preview_url }}">
+							</a>
+						</div>
                     </p>
                 {% empty %}
                     <p>No results found.</p>

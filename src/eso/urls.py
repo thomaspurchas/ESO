@@ -5,16 +5,16 @@ from haystack.forms import FacetedSearchForm
 from haystack.query import SearchQuerySet
 from haystack.views import FacetedSearchView
 
-from api.base import DocumentResource, DerivedPackResource, DerivedFileResource
+# from api.base import DocumentResource, DerivedPackResource, DerivedFileResource
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
 admin.autodiscover()
-
-api_v1 = Api(api_name='v1')
-api_v1.register(DocumentResource())
-api_v1.register(DerivedPackResource())
-api_v1.register(DerivedFileResource())
+#
+# api_v1 = Api(api_name='v1')
+# api_v1.register(DocumentResource())
+# api_v1.register(DerivedPackResource())
+# api_v1.register(DerivedFileResource())
 
 sqs = SearchQuerySet().facet('tags')
 
@@ -24,8 +24,8 @@ urlpatterns = patterns('',
     url(r'^thank-you/$', 'core.views.email_submit'),
     url(r'^upload/$', 'upload.views.new_upload'),
     url(r'^getdetails/$', 'upload.views.get_upload_details'),
-    url(r'^document/(\d+)/thumbnail/(\d+)/(?:(\w+)/)?$', 'core.views.serve_document_thumbnail',
-        name='serve_document_thumbnail'),
+    url(r'^preview/(\d+)?$', 'core.views.serve_document_thumbnail',
+        name='preview'),
     url(r'^document/(\d+)/(?:(\w+)/)?(?:(\d+)/)?$', 'core.views.serve_document',
         name='serve_document'),
 
@@ -33,13 +33,13 @@ urlpatterns = patterns('',
         name='haystack_search'),
 
     # Api urls
-    url(r'^api/v1/document/([0-9]+)/pack/([0-9]+)/derived_file/$',
-        'core.views.api_derived_document_upload'),
-    url(r'^api/v1/document/upload/$',
-        'upload.views.api_document_upload_view'),
-    url(r'^api/v1/download_document/(\d+)/(?:(\w+)/)?(?:(\d+)/)?$',
-        'core.views.serve_document', name='api_serve_document'),
-    url(r'^api/', include(api_v1.urls)),
+    # url(r'^api/v1/document/([0-9]+)/pack/([0-9]+)/derived_file/$',
+    #       'core.views.api_derived_document_upload'),
+    #   url(r'^api/v1/document/upload/$',
+    #       'upload.views.api_document_upload_view'),
+    #   url(r'^api/v1/download_document/(\d+)/(?:(\w+)/)?(?:(\d+)/)?$',
+    #       'core.views.serve_document', name='api_serve_document'),
+    #   url(r'^api/', include(api_v1.urls)),
 
     # Login
     url(r'^accounts/login/$', 'django.contrib.auth.views.login'),

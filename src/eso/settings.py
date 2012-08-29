@@ -59,6 +59,8 @@ CELERY_IGNORE_RESULT = True
 # Useful SITE_ROOT variable
 SITE_ROOT = '/'.join(os.path.dirname(__file__).split('/')[0:-2])
 
+PREVIEW_JS = '%s/src/web-preview/preview.js' % SITE_ROOT
+
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be available on all operating systems.
