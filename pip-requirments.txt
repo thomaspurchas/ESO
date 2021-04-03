@@ -14,7 +14,7 @@ django-haystack==1.2.7
 django-picklefield==0.2.1
 django-statsd-mozilla==0.3.3
 django-tastypie==0.9.11
-gunicorn==0.14.2
+gunicorn==19.4.0
 httplib2==0.7.4
 kombu==2.1.8
 mimeparse==0.1.3
